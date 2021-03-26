@@ -70,30 +70,7 @@ y_train=list(train_labels_ucihar)
 y_test=list(test_labels_ucihar)
 
 
-#32-96.97/96.42
-#64-97.1/96.97
-#96-96.69/96.83
-#128-96.76/96.18
-#256-96.87/96.33
-#320-97.04/96.08
-#416-96.76/96.49
-#512- 96.52/95.91
-#720-96.35\96.21
-#1024- 96.22/95.47
-#1280- 95.54/95.71
-#weights
 
-#8-95.53
-#16-93.08
-#32-96.45
-#64-96.73
-#96-97.31
-#128-97.68
-#256-97.24
-#512-97.21
-#
-#
-#
 
 # par=[1,2,1]
 #par=[96, 128]
@@ -118,24 +95,13 @@ for opt_ in range(len(par)):
     
     x_train1=train_signals_ucihar
     x_test1=test_signals_ucihar
-    
-    # x_train11=np.reshape(x_train10,(len(x_train10),input_shape))
-    # x_test11=np.reshape(x_test10,(len(x_test10),input_shape)) 
-    
-    # x_train1, y_train=seq_data_man((x_train11,y_train), batch_size, seq_dim, input_shape, num_classes)
-    # x_test1, y_test=seq_data_man((x_test11, y_test), batch_size, seq_dim, input_shape, num_classes)
-    
-    #x_train1=np.array(train_signals_ucihar)
-    #x_test1=np.array(test_signals_ucihar)
-    
+        
     n_runs=np.zeros((int(nor),1))    
     for nfr in range(nor):
         print('full training run: '+ str(nfr))
         print('optimisation run: '+ str(opt))    
-        #def GRU_model(x,y, input_dim,output_dim, seq_dim, batch_size, num_epochs, dropout, h2, learning_rate, l1_, l2_, nfr, decay_rate, momentum, decay_steps):
         import tensorflow.keras
-        #from keras.layers import Dense, Flatten
-        #from keras.layers import Conv2D, MaxPooling2D
+
         from tensorflow.keras.models import Sequential
         
         from tensorflow.keras.layers import Dense
@@ -152,9 +118,6 @@ for opt_ in range(len(par)):
         
         history = History()
         
-        
-        #x_train = x_train.astype('float32')
-        #x_test = x_test.astype('float32')
         
         y_train1 = tensorflow.keras.utils.to_categorical(y_train, num_classes)
         y_test1 = tensorflow.keras.utils.to_categorical(y_test, num_classes)
@@ -181,15 +144,6 @@ for opt_ in range(len(par)):
         plt.plot(history.history['loss'], label='train')
         
         plt.show()
-        
-        class AccuracyHistory(tensorflow.keras.callbacks.Callback):
-            def on_train_begin(self, logs={}):
-                self.acc = []
-        
-            def on_epoch_end(self, batch, logs={}):
-                self.acc.append(logs.get('acc'))
-         
-        history = AccuracyHistory()
         
         class AccuracyHistory(tensorflow.keras.callbacks.Callback):
             def on_train_begin(self, logs={}):
