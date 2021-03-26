@@ -10,11 +10,6 @@ import numpy as np
 import os.path
 import pandas as pd
 
-import os
-import numpy as np
-import os.path
-import pandas as pd
-
 def read_signals_ucihar(filename):
     with open(filename, 'r') as fp:
         data = fp.read().splitlines()
@@ -96,9 +91,7 @@ def get_fft_values(y_values, N):
 #128-
 #256-
 #512-
-#
-#
-#
+
 
 # par=[1,2,1]
 #par=[96, 128]
@@ -110,11 +103,11 @@ for opt_ in range(len(par)):
     seq=4#int(opt)#0
     N=24
     input_shape=36
-    num_classes = 6
+    #num_classes = 6
     batch_size = 64
     num_classes = 7
     epochs = 60
-    h2=512
+    h2=512#number of hidden neurons
     dropout=0.25
     learning_rate=0.0002502  
     nor=40
@@ -224,14 +217,6 @@ for opt_ in range(len(par)):
         
         plt.show()
         
-        class AccuracyHistory(tensorflow.keras.callbacks.Callback):
-            def on_train_begin(self, logs={}):
-                self.acc = []
-        
-            def on_epoch_end(self, batch, logs={}):
-                self.acc.append(logs.get('acc'))
-         
-        history = AccuracyHistory()
         
         class AccuracyHistory(tensorflow.keras.callbacks.Callback):
             def on_train_begin(self, logs={}):
