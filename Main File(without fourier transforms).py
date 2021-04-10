@@ -119,8 +119,8 @@ for opt_ in range(len(par)):
         history = History()
         
         
-        y_train1 = tensorflow.keras.utils.to_categorical(y_train, num_classes)
-        y_test1 = tensorflow.keras.utils.to_categorical(y_test, num_classes)
+        y_train1 = tensorflow.keras.utils.to_categorical(np.array(y_train)-1, num_classes)
+        y_test1 = tensorflow.keras.utils.to_categorical(np.array(y_test)-1, num_classes)
         
         start=time.time()
         regressor = Sequential()
