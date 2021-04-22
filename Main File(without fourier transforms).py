@@ -10,11 +10,6 @@ import numpy as np
 import os.path
 import pandas as pd
 
-import os
-import numpy as np
-import os.path
-import pandas as pd
-
 def read_signals_ucihar(filename):
     with open(filename, 'r') as fp:
         data = fp.read().splitlines()
@@ -46,31 +41,17 @@ def load_ucihar_data():
     test_labels = read_labels_ucihar(labelfile_test)
     return train_signals, train_labels, test_signals, test_labels
 
-def seq_data_man(data, batch_size, seq_dim, input_dim, output_dim):
-    X,Y=data
-    X=np.array(X)
-    Y=np.array(Y)
-    print(X.shape)
-    print(Y.shape)
-
-    lx=len(Y)
-    x = []
-    y = []
-
-    for i in range(seq_dim,lx):
-        x.append(X[i-seq_dim:i, :])
-        y.append(Y[i-1])
-
-    x, y, = np.array(x), np.array(y)
-    return (x, y)
 train_signals_ucihar, train_labels_ucihar, test_signals_ucihar, test_labels_ucihar = load_ucihar_data()
 
 
 y_train=list(train_labels_ucihar)
 y_test=list(test_labels_ucihar)
 
+x_train1=train_signals_ucihar
+x_test1=test_signals_ucihar
 
-
+y_train1 = tensorflow.keras.utils.to_categorical(np.array(y_train)-1, num_classes)
+y_test1 = tensorflow.keras.utils.to_categorical(np.array(y_test)-1, num_classes)
 
 # par=[1,2,1]
 #par=[96, 128]
@@ -79,25 +60,23 @@ par=np.arange(1, 2,1)#14
 opt_runs=np.zeros((len(par),1))
 for opt_ in range(len(par)):
     opt=par[opt_] 
-    seq=4#int(opt)#0
     N=24
     input_shape=9
     num_classes = 6
     batch_size = 16#64
-    num_classes = 7
     epochs = 100
-    h2=100#32
+    hidden_dim=32
     dropout=0.25
     learning_rate=0.0002502  
-    nor=20
-    seq_dim=12
+    no_of_training_runs=20
+
 
     
     x_train1=train_signals_ucihar
     x_test1=test_signals_ucihar
         
-    n_runs=np.zeros((int(nor),1))    
-    for nfr in range(nor):
+    n_runs=np.zeros((int(no_of_training_runs),1))    
+    for nfr in range(no_of_training_runs):
         print('full training run: '+ str(nfr))
         print('optimisation run: '+ str(opt))    
         import tensorflow.keras
@@ -109,22 +88,17 @@ for opt_ in range(len(par)):
         from tensorflow.keras.layers import Dropout
         from tensorflow.keras.callbacks import EarlyStopping, History, LearningRateScheduler
         from tensorflow.keras import regularizers
-        #from keras.layers import Recurrent_Dropout
-        # from tensorflow.keras.utils.vis_utils import plot_model
+
         from tensorflow.keras import backend as K
         from tensorflow.keras import optimizers 
         import time
         import matplotlib.pyplot as plt
         
         history = History()
-        
-        
-        y_train1 = tensorflow.keras.utils.to_categorical(np.array(y_train)-1, num_classes)
-        y_test1 = tensorflow.keras.utils.to_categorical(np.array(y_test)-1, num_classes)
-        
+                
         start=time.time()
         regressor = Sequential()
-        regressor.add(GRU(units =h2,input_shape = (x_train1.shape[1], x_train1.shape[2]), activation="tanh", recurrent_activation="sigmoid", use_bias=True, kernel_initializer="glorot_uniform", recurrent_initializer="orthogonal", recurrent_dropout=dropout, return_sequences = False))
+        regressor.add(GRU(units =hidden_dim,input_shape = (x_train1.shape[1], x_train1.shape[2]), activation="tanh", recurrent_activation="sigmoid", use_bias=True, kernel_initializer="glorot_uniform", recurrent_initializer="orthogonal", recurrent_dropout=dropout, return_sequences = False))
 #        regressor.add(Dropout(dropout))
 #        regressor.add(GRU(units = h2, activation="tanh", recurrent_activation="sigmoid", use_bias=True, kernel_initializer="glorot_uniform", recurrent_initializer="orthogonal", recurrent_dropout=dropout, return_sequences = True))
 #        regressor.add(Dropout(dropout))
@@ -132,15 +106,14 @@ for opt_ in range(len(par)):
 #            
         #adamax=optimizers.Adam(lr=learning_rate)#, beta_1=0.9, beta_2=0.99)     
         regressor.add(Dense(units = num_classes, activation='sigmoid'))
-        adamax=optimizers.Adam(lr=learning_rate)#, beta_1=0.9, beta_2=0.99)     
-        sgd=optimizers.SGD(lr=learning_rate)#, momentum=momentum)#, decay=decay_rate)      
-        
+        adamax=optimizers.Adamax(lr=learning_rate)#, beta_1=0.9, beta_2=0.99)     
+       
         regressor.compile(loss=tensorflow.keras.losses.categorical_crossentropy,
                       optimizer=adamax,
                       metrics=['accuracy'])   
         print(regressor.summary())
         
-        regressor.fit(x_train1, y_train1, batch_size=batch_size, epochs=epochs, verbose=1,validation_data=(x_test1, y_test1), callbacks=[history])
+        regressor.fit(x_train1, y_train1, batch_size=batch_size, epochs=epochs, verbose=1, callbacks=[history])
         plt.plot(history.history['loss'], label='train')
         
         plt.show()
