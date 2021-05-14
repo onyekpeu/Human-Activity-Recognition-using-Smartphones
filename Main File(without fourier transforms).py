@@ -47,11 +47,6 @@ train_signals_ucihar, train_labels_ucihar, test_signals_ucihar, test_labels_ucih
 y_train=list(train_labels_ucihar)
 y_test=list(test_labels_ucihar)
 
-x_train1=train_signals_ucihar
-x_test1=test_signals_ucihar
-
-y_train1 = tensorflow.keras.utils.to_categorical(np.array(y_train)-1, num_classes)
-y_test1 = tensorflow.keras.utils.to_categorical(np.array(y_test)-1, num_classes)
 
 # par=[1,2,1]
 #par=[96, 128]
@@ -71,7 +66,8 @@ for opt_ in range(len(par)):
     no_of_training_runs=20
 
 
-    
+    y_train1 = tensorflow.keras.utils.to_categorical(np.array(y_train)-1, num_classes)
+    y_test1 = tensorflow.keras.utils.to_categorical(np.array(y_test)-1, num_classes)
     x_train1=train_signals_ucihar
     x_test1=test_signals_ucihar
         
